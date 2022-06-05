@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "718371613648",
+    "project_id": "dosificapp",
+    "storage_bucket": "dosificapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718371613648:android:cefdfc427b348943e8e7d5",
+        "android_client_info": {
+          "package_name": "com.proyecto2022grupo4.dosificapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718371613648-qfo1do9c6bn7nsjsgcieeee8aip9qflu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu-Eu7BOv8IOhP-2209SHgRY38jN-6O5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718371613648-qfo1do9c6bn7nsjsgcieeee8aip9qflu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
