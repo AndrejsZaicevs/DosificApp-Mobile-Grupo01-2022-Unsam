@@ -1,18 +1,23 @@
 package com.example.dosificapp.ui.main.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 ;
+import com.example.dosificapp.MainActivity;
 import com.example.dosificapp.R;
 import com.example.dosificapp.databinding.FragmentAcompBinding;
 import com.example.dosificapp.dominio.Acomp;
 import com.example.dosificapp.dominio.Dosis;
+import com.example.dosificapp.ui.login.LoginActivity;
 import com.example.dosificapp.ui.main.PageViewModelAcomp;
 import com.example.dosificapp.ui.main.adapters.AcompListAdapter;
 import com.example.dosificapp.ui.main.adapters.DosisListAdapter;

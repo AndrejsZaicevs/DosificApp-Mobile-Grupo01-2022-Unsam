@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dosificapp.CreateAccount;
 import com.example.dosificapp.MainActivity;
 import com.example.dosificapp.R;
 import com.example.dosificapp.ui.login.LoginViewModel;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = binding.username;
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
-        final Button register = binding.register;
+        final Button registerButton = binding.register;
         final Button paciente = binding.paciente;
         final Button acompa = binding.acomp;
         final Button ambos = binding.ambos;
@@ -127,6 +128,13 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, CreateAccount.class));
             }
         });
 

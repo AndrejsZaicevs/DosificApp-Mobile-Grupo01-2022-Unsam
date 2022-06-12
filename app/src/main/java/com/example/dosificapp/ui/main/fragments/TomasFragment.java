@@ -1,9 +1,12 @@
 package com.example.dosificapp.ui.main.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.dosificapp.R;
 import com.example.dosificapp.databinding.FragmentTomasBinding;
 import com.example.dosificapp.dominio.Dosis;
+import com.example.dosificapp.ui.Calendar;
 import com.example.dosificapp.ui.main.PageViewModelTomas;
 import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
 
@@ -51,6 +55,16 @@ public class TomasFragment extends AbstractFragment {
 
         binding = FragmentTomasBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        Button button = binding.buttonCrono;
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), Calendar.class));
+            }
+        });
+
 
         // Cargo las dosis
         ListView listViewDosis = binding.listCrono;

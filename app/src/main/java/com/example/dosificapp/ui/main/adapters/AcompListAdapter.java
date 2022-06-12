@@ -30,8 +30,8 @@ public class AcompListAdapter extends ArrayAdapter<Acomp> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //String name = getItem(position).getName();
-        //String status = getItem(position).getStatus();
+        String name = getItem(position).getName();
+        String status = getItem(position).getStatus();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
@@ -39,8 +39,8 @@ public class AcompListAdapter extends ArrayAdapter<Acomp> {
         TextView nameTV = convertView.findViewById(R.id.nameAcomp);
         TextView statusTV = convertView.findViewById(R.id.statusAcomp);
 
-        nameTV.setText("name");
-        statusTV.setText("status");
+        nameTV.setText(name);
+        statusTV.setText(status);
 
         return convertView;
     }
