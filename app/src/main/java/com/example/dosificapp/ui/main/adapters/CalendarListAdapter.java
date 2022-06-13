@@ -37,9 +37,9 @@ public class CalendarListAdapter extends ArrayAdapter<CalendarItem> {
         convertView = inflater.inflate(mResource, parent, false);
 
         TextView hs = convertView.findViewById(R.id.textHs);
-        TextView ampm = convertView.findViewById(R.id.textViewAMPM);
+        //TextView ampm = convertView.findViewById(R.id.textViewAMPM);
 
-        hs.setText(String.format("%2s",getItem(position).getHsString()).replace(' ', '0'));
+        hs.setText(String.format("%2s",getItem(position).getHsString()).replace(' ', '0')+":00 hs");
         //ampm.setText(getItem(position).getAmPmString());
 
         CalendarItem calendarItem = getItem(position);
@@ -57,9 +57,10 @@ public class CalendarListAdapter extends ArrayAdapter<CalendarItem> {
             }
             try {
                 String value = getItem(position).getName(i);
+                text.setVisibility(View.VISIBLE);
                 text.setText(value);
             }catch(Exception e){
-                text.setText("");
+
             }
         }
 
