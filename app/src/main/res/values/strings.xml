@@ -10,6 +10,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="tab_text_1">Proximas tomas</string>
-    <string name="tab_text_2">Acompañados</string>
+    <string name="prox_tomas">Proximas tomas</string>
+    <string name="acomp">Acompañados</string>
+    <string name="title_activity_calendar_tab">CalendarTab</string>
+    <string name="hoy">Hoy</string>
+    <string name="manana">Mañana</string>
+    <string name="pasado">Pasado</string>
 </resources>

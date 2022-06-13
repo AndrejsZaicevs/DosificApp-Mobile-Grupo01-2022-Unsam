@@ -12,14 +12,15 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.dosificapp.CalendarTab;
 import com.example.dosificapp.R;
 import com.example.dosificapp.databinding.FragmentTomasBinding;
 import com.example.dosificapp.dominio.Dosis;
-import com.example.dosificapp.ui.Calendar;
 import com.example.dosificapp.ui.main.PageViewModelTomas;
 import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class TomasFragment extends AbstractFragment {
@@ -28,6 +29,7 @@ public class TomasFragment extends AbstractFragment {
 
     private PageViewModelTomas pageViewModel;
     private FragmentTomasBinding binding;
+    ArrayList<Dosis> listDataDosis;
 
     public static TomasFragment newInstance(int index) {
         TomasFragment fragment = new TomasFragment();
@@ -61,25 +63,25 @@ public class TomasFragment extends AbstractFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), Calendar.class));
+                Intent intent = new Intent(getContext(), CalendarTab.class);
+                intent.putExtra("dosis", listDataDosis);
+                startActivity(intent);
             }
         });
 
 
         // Cargo las dosis
         ListView listViewDosis = binding.listCrono;
-        ArrayList<Dosis> listDataDosis = new ArrayList<Dosis>();
-        listDataDosis.add(new Dosis(1L, 1L, new Date(), "test1"));
-        listDataDosis.add(new Dosis(2L, 2L, new Date(), "test2"));
-        listDataDosis.add(new Dosis(3L, 3L, new Date(), "test3"));
-        listDataDosis.add(new Dosis(4L, 4L, new Date(), "test4"));
-        listDataDosis.add(new Dosis(5L, 5L, new Date(), "test5"));
-        listDataDosis.add(new Dosis(6L, 6L, new Date(), "test6"));
+        listDataDosis = new ArrayList<Dosis>();
+        listDataDosis.add(new Dosis(1L, 1L, "2022-06-13 16:02:37", "test1"));
+        listDataDosis.add(new Dosis(2L, 2L, "2022-06-14 16:02:37", "test2"));
+        listDataDosis.add(new Dosis(3L, 3L, "2022-06-13 01:02:37", "test3"));
+        listDataDosis.add(new Dosis(4L, 4L, "2022-06-20 16:02:37", "test4"));
+        listDataDosis.add(new Dosis(5L, 5L, "2022-06-20 16:02:37", "test5"));
+        listDataDosis.add(new Dosis(6L, 6L, "2022-06-20 16:02:37", "test6"));
 
         DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
         listViewDosis.setAdapter(adapter);
-
-
         return root;
     }
 

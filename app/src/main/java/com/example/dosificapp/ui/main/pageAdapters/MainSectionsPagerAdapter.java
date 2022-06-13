@@ -1,4 +1,4 @@
-package com.example.dosificapp.ui.main;
+package com.example.dosificapp.ui.main.pageAdapters;
 
 import android.content.Context;
 import androidx.annotation.Nullable;
@@ -18,15 +18,15 @@ import java.util.ArrayList;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class MainSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[] {R.string.tab_text_1, R.string.tab_text_2};
+    private static final int[] TAB_TITLES = new int[] {R.string.prox_tomas, R.string.acomp};
     private final Context mContext;
     private LoggedInUser user;
     private  ArrayList<AbstractFragment> fragments;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm, LoggedInUser _user) {
+    public MainSectionsPagerAdapter(Context context, FragmentManager fm, LoggedInUser _user) {
         super(fm);
         mContext = context;
         user = _user;

@@ -31,7 +31,7 @@ public class DosisListAdapter extends ArrayAdapter<Dosis> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String name = getItem(position).getName();
-        Date hora = getItem(position).getHora();
+        String hora = getItem(position).getHora();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
@@ -40,7 +40,7 @@ public class DosisListAdapter extends ArrayAdapter<Dosis> {
         TextView horaTV = convertView.findViewById(R.id.horaDosis);
 
         nameTV.setText(name);
-        horaTV.setText(hora.toString());
+        horaTV.setText(hora);
 
         return convertView;
     }

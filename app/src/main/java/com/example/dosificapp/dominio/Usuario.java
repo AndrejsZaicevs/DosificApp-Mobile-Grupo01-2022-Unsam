@@ -1,6 +1,8 @@
 package com.example.dosificapp.dominio;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
 
     private String nombre;
     private String apellido;
@@ -11,39 +13,30 @@ public class Usuario {
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public String getApellido() {
         return apellido;
     }
-
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getNumero() {
         return numero;
     }
-
     public void setNumero(String numero) {
         this.numero = numero;
     }
-
     public String getDocumento() {
         return documento;
     }
-
     public void setDocumento(String documento) {
         this.documento = documento;
     }

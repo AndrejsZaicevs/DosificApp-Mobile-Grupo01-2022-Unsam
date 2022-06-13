@@ -49,12 +49,23 @@ public class CreateAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(validateInput()){
-                    startActivity(new Intent(CreateAccount.this, Password.class));
+                    updateUser();
+                    Intent intent = new Intent(CreateAccount.this, Password.class);
+                    intent.putExtra("user", usuario);
+                    startActivity(intent);
                 }else{
                     Toast.makeText(getApplicationContext(), "Complete todos los datos antes de continuar", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void updateUser(){
+        usuario.setNombre((String) name.getText());
+        usuario.setApellido((String) lastName.getText());
+        usuario.setDocumento((String) id.getText());
+        usuario.setNumero((String) number.getText());
+        usuario.setEmail((String) email.getText());
     }
 
     private boolean validateInput() {
