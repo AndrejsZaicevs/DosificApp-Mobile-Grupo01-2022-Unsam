@@ -74,6 +74,7 @@ public class TomasFragment extends AbstractFragment {
         ListView listViewDosis = binding.listCrono;
         listDataDosis = new ArrayList<Dosis>();
         listDataDosis.add(new Dosis(1L, 1L, "2022-06-13 16:02:37", "test1"));
+        listDataDosis.add(new Dosis(1L, 1L, "2022-06-13 16:02:37", "Otro medicamento"));
         listDataDosis.add(new Dosis(2L, 2L, "2022-06-14 16:02:37", "test2"));
         listDataDosis.add(new Dosis(3L, 3L, "2022-06-13 01:02:37", "test3"));
         listDataDosis.add(new Dosis(4L, 4L, "2022-06-20 16:02:37", "test4"));
