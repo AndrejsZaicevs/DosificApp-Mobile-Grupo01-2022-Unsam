@@ -22,7 +22,9 @@
     <ListView
         android:id="@+id/listCrono"
         android:layout_width="391dp"
-        android:layout_height="793dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

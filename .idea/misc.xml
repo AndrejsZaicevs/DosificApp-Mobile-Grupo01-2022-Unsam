@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.207" />
         <entry key="app/src/main/res/layout-w1240dp/activity_login.xml" value="0.2817938420348059" />
         <entry key="app/src/main/res/layout-w936dp/activity_login.xml" value="0.3073770491803279" />
+        <entry key="app/src/main/res/layout/activity_alert.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_calendar.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_calendar_tab.xml" value="0.30055579307396324" />
         <entry key="app/src/main/res/layout/activity_create_account.xml" value="0.3522873022659256" />

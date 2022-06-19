@@ -1,6 +1,6 @@
 package com.example.dosificapp.data;
 
-import com.example.dosificapp.data.model.LoggedInUser;
+import com.example.dosificapp.dominio.Usuario;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -10,26 +10,16 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private LoginDataSource dataSource;
+    private Usuario user = null;
 
-    // If user credentials will be cached in local storage, it is recommended it be encrypted
-    // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
-
-    // private constructor : singleton access
-    private LoginRepository(LoginDataSource dataSource) {
+    public LoginRepository() {
         // TODO leer cache de credenciales
-        this.dataSource = dataSource;
-    }
-
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
-        if (instance == null) {
-            instance = new LoginRepository(dataSource);
-        }
-        return instance;
     }
 
     public static LoginRepository getInstance() {
+        if (instance == null) {
+            instance = new LoginRepository();
+        }
         return instance;
     }
 
@@ -39,26 +29,13 @@ public class LoginRepository {
 
     public void logout() {
         user = null;
-        dataSource.logout();
     }
 
-    public LoggedInUser getLoggedInUser(){
+    public Usuario getLoggedInUser(){
         return this.user;
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
-        // TODO escribir cache de credenciales
+    public void setLoggedInUser(Usuario user) {
         this.user = user;
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
-    }
-
-    public Result<LoggedInUser> login(String username, String password) {
-        // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
-        return result;
     }
 }

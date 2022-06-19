@@ -1,6 +1,6 @@
 package com.example.dosificapp.data;
 
-import com.example.dosificapp.data.model.LoggedInUser;
+import com.example.dosificapp.dominio.Usuario;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public class LoginDataSource {
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<Usuario> login(String username, String password) {
 
         if(username != password){
             return new Result.Error(new IOException("Credenciales incorrectas"));
@@ -28,7 +28,7 @@ public class LoginDataSource {
                default: return new Result.Error(new IOException("Credenciales incorrectas"));
            }
 
-           LoggedInUser fakeUser = new LoggedInUser(username, password, type);
+           Usuario fakeUser = new Usuario(username, password, type);
            return new Result.Success<>(fakeUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));

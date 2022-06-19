@@ -12,9 +12,10 @@ public class Dosis implements Serializable {
     private Long doseTakeid;
     private Calendar hora;
     private String name;
+    private int units;
     SimpleDateFormat sdf;
 
-    public Dosis(Long _doseId, Long _doseTakeid, String _hora, String _name){
+    public Dosis(Long _doseId, Long _doseTakeid, String _hora, String _name, int units){
         doseId = _doseId;
         doseTakeid = _doseTakeid;
         name = _name;

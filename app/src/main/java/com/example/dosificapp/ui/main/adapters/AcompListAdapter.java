@@ -1,10 +1,13 @@
 package com.example.dosificapp.ui.main.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +17,7 @@ import com.example.dosificapp.R;
 import com.example.dosificapp.dominio.Acomp;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Base64;
 
 public class AcompListAdapter extends ArrayAdapter<Acomp> {
 
@@ -38,6 +41,12 @@ public class AcompListAdapter extends ArrayAdapter<Acomp> {
 
         TextView nameTV = convertView.findViewById(R.id.nameAcomp);
         TextView statusTV = convertView.findViewById(R.id.statusAcomp);
+        ImageView image = convertView.findViewById(R.id.imageAcompañante);
+
+        byte[] imageBytes = Base64.getDecoder().decode(getItem(position).getBase64image());
+        Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+        image.setImageBitmap(decodedImage);
 
         nameTV.setText(name);
         statusTV.setText(status);

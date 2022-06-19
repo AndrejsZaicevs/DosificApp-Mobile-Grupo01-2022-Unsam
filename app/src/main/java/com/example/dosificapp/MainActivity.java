@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.dosificapp.data.LoginRepository;
-import com.example.dosificapp.data.model.LoggedInUser;
+import com.example.dosificapp.dominio.Usuario;
 import com.example.dosificapp.ui.login.LoginActivity;
 import com.google.android.material.tabs.TabLayout;
 
@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private LoginRepository userRepo = LoginRepository.getInstance();
-    private LoggedInUser user = userRepo.getLoggedInUser();
+    private Usuario user = userRepo.getLoggedInUser();
+    private LoginRepository loginRepository = LoginRepository.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
