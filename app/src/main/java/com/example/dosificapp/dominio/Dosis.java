@@ -13,6 +13,7 @@ public class Dosis implements Serializable {
     private Calendar hora;
     private String name;
     private int units;
+    private String state;
     SimpleDateFormat sdf;
 
     public Dosis(Long _doseId, Long _doseTakeid, String _hora, String _name, int units){
@@ -35,4 +36,12 @@ public class Dosis implements Serializable {
     }
     public Calendar getCalendar(){ return hora; }
     public String getName() {return name;}
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 }

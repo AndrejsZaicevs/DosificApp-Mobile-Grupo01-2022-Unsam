@@ -11,7 +11,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
-import com.example.dosificapp.dto.LoginDTO;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,6 @@ public class BackendService {
 
     public boolean login(String user, String pass){
         final boolean[] funcResponse = {false};
-        LoginDTO login = new LoginDTO(user, pass);
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = this.baseUrl + "/login";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/verPerfil"
+        android:title="Ver perfil"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/salirCuenta"
+        android:title="Salir"
+        app:showAsAction="always"/>
+</menu>

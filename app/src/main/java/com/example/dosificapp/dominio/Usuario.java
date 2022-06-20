@@ -13,6 +13,7 @@ public class Usuario implements Serializable {
     private String type;
     private String password;
     private String user;
+    private String imageBase64;
 
     public Usuario(String user, String password, String type) {
         this.type = type;
@@ -61,6 +62,14 @@ public class Usuario implements Serializable {
 
     public String getType() {
         return type;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     public void setType(String type) {

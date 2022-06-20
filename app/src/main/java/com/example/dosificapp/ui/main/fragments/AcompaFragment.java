@@ -43,7 +43,9 @@ public class AcompaFragment  extends AbstractFragment {
     private PageViewModelAcomp pageViewModel;
     private FragmentAcompBinding binding;
     ArrayList<Acomp> listDataAcomp = new ArrayList<Acomp>();
+    ArrayList<Dosis> listTomasAcomp = new ArrayList<Dosis>();
     ListView listViewDosis;
+
 
     public static AcompaFragment newInstance(int index) {
         AcompaFragment fragment = new AcompaFragment();
@@ -121,6 +123,10 @@ public class AcompaFragment  extends AbstractFragment {
 
         };
         Volley.newRequestQueue(getContext()).add(stringRequest);
+    }
+
+    private void getTomasAcomp(int idUser){
+
     }
 
     @Override

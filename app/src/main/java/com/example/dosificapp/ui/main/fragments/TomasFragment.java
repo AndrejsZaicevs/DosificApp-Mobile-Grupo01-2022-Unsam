@@ -29,7 +29,6 @@ import com.example.dosificapp.R;
 import com.example.dosificapp.databinding.FragmentTomasBinding;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
-import com.example.dosificapp.dto.LoginDTO;
 import com.example.dosificapp.service.BackendService;
 import com.example.dosificapp.ui.login.LoginActivity;
 import com.example.dosificapp.ui.main.PageViewModelTomas;
@@ -44,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class TomasFragment extends AbstractFragment {
 
@@ -119,7 +119,7 @@ public class TomasFragment extends AbstractFragment {
                     public void onResponse(String response) {
                         // Aca esta bien
                         //String mockResponse = "[{units:1,dateTime:\"2022-16-18 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 22:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 22:00\",name:\"Medicamento1\"}]";
-                        String mockResponse = "[{units:1,dateTime:\"2022-06-18 23:58:00\",name:\"Medicamento1\"}]";
+                        String mockResponse = "[{units:1,dateTime:\"2022-06-19 23:58:00\",name:\"Medicamento1\"}]";
                         Log.d("GOTTEN", mockResponse);
                         listDataDosis.clear();
                         try{
@@ -160,14 +160,11 @@ public class TomasFragment extends AbstractFragment {
 
             AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, intent, PendingIntent.FLAG_MUTABLE);
+            intent.putExtra("dosis", dosis);
+            intent.setAction(dosis.getName());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            // Set the alarm to start at 8:30 a.m.
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.add(Calendar.SECOND, 5);
-
-            alarmManager.set(AlarmManager.RTC_WAKEUP, dosis.getCalendar().getTimeInMillis(), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, dosis.getCalendar().getTimeInMillis(), pendingIntent);
         }
     }
 
