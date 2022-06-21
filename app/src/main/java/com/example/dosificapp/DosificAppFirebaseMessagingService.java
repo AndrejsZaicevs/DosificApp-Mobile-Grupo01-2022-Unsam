@@ -1,4 +1,5 @@
 package com.example.dosificapp;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,10 +11,16 @@ public class DosificAppFirebaseMessagingService extends FirebaseMessagingService
 
     private String TAG = "FirebaseService";
 
+
     @Override
     public void onNewToken(@NonNull String token){
         super.onNewToken(token);
         Log.d(TAG,"Token : " + token );
+        getSharedPreferences("_", MODE_PRIVATE).edit().putString("fb", token).apply();
+    }
+
+    public static String getToken(Context context){
+        return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "");
     }
 
     @Override

@@ -50,7 +50,7 @@ public class CreateAccount extends AppCompatActivity {
             public void onClick(View v) {
                 if(validateInput()){
                     updateUser();
-                    Intent intent = new Intent(CreateAccount.this, Password.class);
+                    Intent intent = new Intent(getApplicationContext(), Password.class);
                     intent.putExtra("user", usuario);
                     startActivity(intent);
                 }else{

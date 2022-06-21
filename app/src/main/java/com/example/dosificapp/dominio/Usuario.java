@@ -1,6 +1,10 @@
 package com.example.dosificapp.dominio;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Usuario implements Serializable {
 
@@ -11,11 +15,12 @@ public class Usuario implements Serializable {
     private String numero;
     private String documento;
     private String type;
+    private ArrayList<String> tiposUsuario = new ArrayList<>();
     private String password;
     private String user;
     private String imageBase64;
 
-    public Usuario(String user, String password, String type) {
+    public Usuario(String user, String password) {
         this.type = type;
         this.password = password;
         this.user = user;
@@ -61,6 +66,13 @@ public class Usuario implements Serializable {
     }
 
     public String getType() {
+        String returnType = "";
+        if(tiposUsuario.contains("ACOMPANIANTE")) {
+            returnType = returnType + "A";
+        }
+        if(tiposUsuario.contains("PACIENTE")) {
+            returnType = returnType + "P";
+        }
         return type;
     }
 
@@ -94,5 +106,19 @@ public class Usuario implements Serializable {
 
     public String getDisplayName(){
         return this.user;
+    }
+
+    public ArrayList<String> getTiposUsuario() {
+        return tiposUsuario;
+    }
+
+    public void setTiposUsuario(JSONArray tiposUsuario) {
+        for(int i = 0; i < tiposUsuario.length(); i++){
+            try {
+                tiposUsuario.put(tiposUsuario.getString(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

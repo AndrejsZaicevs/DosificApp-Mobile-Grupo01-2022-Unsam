@@ -16,8 +16,10 @@
     <string name="hoy">Hoy</string>
     <string name="manana">Mañana</string>
     <string name="pasado">Pasado</string>
-    <string name="baseURL">https://2855a24f-e9ec-4e71-9637-7eaa51a05117.mock.pstmn.io</string>
     <string name="title_activity_alert">Alert</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="dateFormat">yyyy-MM-dd HH:mm:ss</string>
+
+    <string name="baseURL">https://fef0-2802-8010-491c-5100-ac26-3499-2dbd-bdf8.sa.ngrok.io</string>
 </resources>

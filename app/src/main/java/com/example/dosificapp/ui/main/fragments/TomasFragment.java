@@ -112,20 +112,22 @@ public class TomasFragment extends AbstractFragment {
     public String getName() { return "Proximas tomas"; }
 
     private void getDoses(ListView listViewDosis){
-        String url = getString(R.string.baseURL) + "/getDosis";
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerListadoDosis/" + 1;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Aca esta bien
                         //String mockResponse = "[{units:1,dateTime:\"2022-16-18 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 22:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 22:00\",name:\"Medicamento1\"}]";
-                        String mockResponse = "[{units:1,dateTime:\"2022-06-19 23:58:00\",name:\"Medicamento1\"}]";
+                        String mockResponse = "[{units:1,dateTime:\"2022-06-20 08:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-20 14:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-20 22:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 08:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 14:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 22:00:00\",name:\"Medicamento 1\"}]";
                         Log.d("GOTTEN", mockResponse);
                         listDataDosis.clear();
                         try{
                             JSONArray jsonResponse = new JSONArray(mockResponse);
                             for(int i = 0; i < jsonResponse.length(); i++){
-                                JSONObject dosisObjeto = jsonResponse.getJSONObject(i);
+                                JSONArray tomas = new JSONArray(jsonResponse.getJSONArray(i));
+
+                                /*JSONObject dosisObjeto = jsonResponse.getJSONObject(i);
                                 String test = dosisObjeto.getString("dateTime");
                                 Dosis dosis = new Dosis(
                                         1L,
@@ -134,14 +136,15 @@ public class TomasFragment extends AbstractFragment {
                                         dosisObjeto.getString("name"),
                                         dosisObjeto.getInt("units")
                                 );
-                                listDataDosis.add(dosis);
+                                listDataDosis.add(dosis);*/
                             }
-                            DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
+                            /*DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
                             listViewDosis.setAdapter(adapter);
-                            setAlarms(listDataDosis);
+                            setAlarms(listDataDosis);*/
 
                         }catch (JSONException e){
-                            Toast.makeText(getContext(), "A ocurrido un error al recuperar las tomas", Toast.LENGTH_SHORT).show();
+                            Log.d("ERROR RECUPERAR RECETAS", e.toString());
+                            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -162,6 +165,7 @@ public class TomasFragment extends AbstractFragment {
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             intent.putExtra("dosis", dosis);
             intent.setAction(dosis.getName());
+            intent.addFlags(0);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, dosis.getCalendar().getTimeInMillis(), pendingIntent);

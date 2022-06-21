@@ -25,7 +25,7 @@ import java.util.Calendar;
 public class AlertActivity extends AppCompatActivity {
 
     private ActivityAlertBinding binding;
-    private Dosis dosis;
+    private String dosis;
     Ringtone r;
 
     @Override
@@ -39,10 +39,10 @@ public class AlertActivity extends AppCompatActivity {
 
         binding = ActivityAlertBinding.inflate(getLayoutInflater());
 
-        //dosis = (Dosis) getIntent().getSerializableExtra("dosis");
+        dosis = getIntent().getExtras().getString("dosis");
 
-        //TextView textDosis = (TextView) findViewById(R.id.medicamento);
-        //textDosis.setText(dosis.getName());
+        TextView textDosis = (TextView) findViewById(R.id.medicamento);
+        textDosis.setText(dosis);
 
         try {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
@@ -62,12 +62,12 @@ public class AlertActivity extends AppCompatActivity {
 
                 AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                 Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                //intent.putExtra("dosis", dosis);
+                intent.setAction(dosis);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.add(Calendar.MINUTE, 5);
+                calendar.add(Calendar.SECOND, 5);
 
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
