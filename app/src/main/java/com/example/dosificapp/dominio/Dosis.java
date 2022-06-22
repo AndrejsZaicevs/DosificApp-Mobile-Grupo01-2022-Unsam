@@ -12,6 +12,25 @@ public class Dosis implements Serializable {
     private Long doseTakeid;
     private Calendar hora;
     private String name;
+    private int intervaloPost;
+    private int maxPost;
+
+    public int getIntervaloPost() {
+        return intervaloPost;
+    }
+
+    public void setIntervaloPost(int intervaloPost) {
+        this.intervaloPost = intervaloPost;
+    }
+
+    public int getMaxPost() {
+        return maxPost;
+    }
+
+    public void setMaxPost(int maxPost) {
+        this.maxPost = maxPost;
+    }
+
     private int units;
     private String state;
     SimpleDateFormat sdf;

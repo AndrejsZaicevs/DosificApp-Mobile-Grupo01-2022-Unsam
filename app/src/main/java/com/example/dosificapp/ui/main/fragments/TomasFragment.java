@@ -33,11 +33,14 @@ import com.example.dosificapp.service.BackendService;
 import com.example.dosificapp.ui.login.LoginActivity;
 import com.example.dosificapp.ui.main.PageViewModelTomas;
 import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +57,6 @@ public class TomasFragment extends AbstractFragment {
     private BackendService backendService = new BackendService("", getContext());
     private Usuario usuario;
     ArrayList<Dosis> listDataDosis = new ArrayList<>();
-
 
     public static TomasFragment newInstance(int index) {
         TomasFragment fragment = new TomasFragment();
@@ -94,7 +96,6 @@ public class TomasFragment extends AbstractFragment {
             }
         });
 
-
         // Cargo las dosis
         ListView listViewDosis = binding.listCrono;
         getDoses(listViewDosis);
@@ -113,48 +114,61 @@ public class TomasFragment extends AbstractFragment {
 
     private void getDoses(ListView listViewDosis){
         String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerListadoDosis/" + 1;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Aca esta bien
-                        //String mockResponse = "[{units:1,dateTime:\"2022-16-18 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-18 22:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 10:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 13:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 16:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 19:00\",name:\"Medicamento1\"},{units:1,dateTime:\"2022-16-19 22:00\",name:\"Medicamento1\"}]";
-                        String mockResponse = "[{units:1,dateTime:\"2022-06-20 08:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-20 14:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-20 22:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 08:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 14:00:00\",name:\"Medicamento 1\"},{units:1,dateTime:\"2022-06-21 22:00:00\",name:\"Medicamento 1\"}]";
-                        Log.d("GOTTEN", mockResponse);
                         listDataDosis.clear();
                         try{
-                            JSONArray jsonResponse = new JSONArray(mockResponse);
-                            for(int i = 0; i < jsonResponse.length(); i++){
-                                JSONArray tomas = new JSONArray(jsonResponse.getJSONArray(i));
+                            JSONArray jsonResponse = new JSONArray(response);
+                            /*for(int i = 0; i < jsonResponse.length(); i++){
+                                // Dosis
+                                JSONObject dosisJson = new JSONObject(jsonResponse.getString(i));
+                                JSONArray tomas = new JSONArray(dosisJson.getString("Tomas"));
+                                for(int j = 0; j < tomas.length(); j++){
 
-                                /*JSONObject dosisObjeto = jsonResponse.getJSONObject(i);
-                                String test = dosisObjeto.getString("dateTime");
-                                Dosis dosis = new Dosis(
-                                        1L,
-                                        1L,
-                                        dosisObjeto.getString("dateTime"),
-                                        dosisObjeto.getString("name"),
-                                        dosisObjeto.getInt("units")
-                                );
-                                listDataDosis.add(dosis);*/
-                            }
-                            /*DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
+                                    JSONObject toma = new JSONObject(tomas.getString(j));
+                                    Dosis dosis = new Dosis(
+                                            dosisJson.getLong("Id"),
+                                            toma.getLong("Id"),
+                                            toma.getString("FechaHora"),
+                                            dosisJson.getString("Descripcion"),
+                                            dosisJson.getInt("Unidades")
+                                    );
+                                    if(dosis.getCalendar().getTimeInMillis() - System.currentTimeMillis() > 0)
+                                    {
+                                        listDataDosis.add(dosis);
+                                    }
+                                }
+                            }*/
+                            Dosis dosis = new Dosis(1L, 1L, "2022-06-20 10:00:00","Test", 1);
+                            dosis.setIntervaloPost(10);
+                            dosis.setMaxPost(3);
+                            listDataDosis.add(dosis);
+                            DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
                             listViewDosis.setAdapter(adapter);
-                            setAlarms(listDataDosis);*/
+                            setAlarms(listDataDosis);
 
                         }catch (JSONException e){
                             Log.d("ERROR RECUPERAR RECETAS", e.toString());
-                            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "ERROR RECUPERAR RECETAS", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "bad", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error al recuperar recetas", Toast.LENGTH_SHORT).show();
             }
         }){
-
-        };
+            @Override
+            protected Map<String, String> getParams(){
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("Inicio","2022-06-21");
+                params.put("Fin","2022-06-24");
+                return params;
+            }
+        };;
         Volley.newRequestQueue(getContext()).add(stringRequest);
     }
 
@@ -164,7 +178,8 @@ public class TomasFragment extends AbstractFragment {
             AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
             intent.putExtra("dosis", dosis);
-            intent.setAction(dosis.getName());
+            Gson gson = new Gson();
+            intent.setAction(gson.toJson(dosis));
             intent.addFlags(0);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

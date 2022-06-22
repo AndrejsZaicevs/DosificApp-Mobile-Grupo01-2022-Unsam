@@ -2,6 +2,7 @@ package com.example.dosificapp.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,9 @@ import com.example.dosificapp.R;
 import com.example.dosificapp.data.LoginRepository;
 import com.example.dosificapp.databinding.ActivityLoginBinding;
 import com.example.dosificapp.dominio.Usuario;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
@@ -53,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         final Button ambos = binding.ambos;
         loadingProgressBar = binding.loading;
 
+        //FirebaseMessaging.getInstance().deleteToken();
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                login("paciente", "paciente");
+                login("x@z.com", "1234");
             }
         });
 
@@ -95,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String user, String pass){
-        String token = DosificAppFirebaseMessagingService.getToken(getApplicationContext());
         String url = getString(R.string.baseURL) + "/api/Base/Login/";
+        String token = DosificAppFirebaseMessagingService.getToken(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -105,16 +110,18 @@ public class LoginActivity extends AppCompatActivity {
                         Usuario usuario = new Usuario(user,pass);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            usuario.setId(jsonObject.getInt("Id"));
-                            usuario.setNombre(jsonObject.getString("Nombre"));
-                            usuario.setApellido(jsonObject.getString("Apellido"));
-                            usuario.setNumero(jsonObject.getString("NumeroTel"));
-                            usuario.setDocumento(jsonObject.getString("Documento"));
-                            usuario.setImageBase64(jsonObject.getString("Foto"));
+                            JSONObject usuarioJson = new JSONObject(jsonObject.getString("Usuario"));
+                            usuario.setId(usuarioJson.getInt("Id"));
+                            usuario.setNombre(usuarioJson.getString("Nombre"));
+                            usuario.setApellido(usuarioJson.getString("Apellido"));
+                            usuario.setNumero(usuarioJson.getString("NumeroTel"));
+                            usuario.setDocumento(usuarioJson.getString("Documento"));
+                            usuario.setImageBase64(usuarioJson.getString("Foto"));
                             usuario.setTiposUsuario(jsonObject.getJSONArray("TiposUsuarios"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        loginRepository.setLoggedInUser(usuario);
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }
                 }, new Response.ErrorListener() {
@@ -133,8 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 return params;
             }
         };
-        Volley.newRequestQueue(this).add(stringRequest);
-
+        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
 
     }
 

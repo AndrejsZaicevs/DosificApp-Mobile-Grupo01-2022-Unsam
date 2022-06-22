@@ -73,7 +73,7 @@ public class Usuario implements Serializable {
         if(tiposUsuario.contains("PACIENTE")) {
             returnType = returnType + "P";
         }
-        return type;
+        return returnType;
     }
 
     public String getImageBase64() {
@@ -115,7 +115,7 @@ public class Usuario implements Serializable {
     public void setTiposUsuario(JSONArray tiposUsuario) {
         for(int i = 0; i < tiposUsuario.length(); i++){
             try {
-                tiposUsuario.put(tiposUsuario.getString(i));
+                this.tiposUsuario.add(tiposUsuario.getString(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
