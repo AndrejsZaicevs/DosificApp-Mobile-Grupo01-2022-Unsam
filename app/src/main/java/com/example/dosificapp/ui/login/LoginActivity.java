@@ -92,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
         ambos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "La cosa", Toast.LENGTH_SHORT).show();
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 login("ambos", "ambos");
             }
@@ -145,8 +144,5 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        /*Log.d("CDA", "onBackPressed Called");
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));*/
-    }
+    public void onBackPressed() { }
 }

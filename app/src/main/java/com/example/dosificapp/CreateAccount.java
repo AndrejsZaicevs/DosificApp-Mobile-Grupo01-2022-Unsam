@@ -61,11 +61,12 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void updateUser(){
-        usuario.setNombre((String) name.getText());
-        usuario.setApellido((String) lastName.getText());
-        usuario.setDocumento((String) id.getText());
-        usuario.setNumero((String) number.getText());
-        usuario.setEmail((String) email.getText());
+        usuario = new Usuario();
+        usuario.setNombre(name.getText().toString());
+        usuario.setApellido(lastName.getText().toString());
+        usuario.setDocumento(id.getText().toString());
+        usuario.setNumero(number.getText().toString());
+        usuario.setEmail(email.getText().toString());
     }
 
     private boolean validateInput() {

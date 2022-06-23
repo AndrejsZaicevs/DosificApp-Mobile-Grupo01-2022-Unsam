@@ -20,6 +20,10 @@ public class Usuario implements Serializable {
     private String user;
     private String imageBase64;
 
+    public Usuario(){
+
+    }
+
     public Usuario(String user, String password) {
         this.type = type;
         this.password = password;
@@ -120,5 +124,9 @@ public class Usuario implements Serializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getNombreApellido() {
+        return this.nombre + " " + this.apellido;
     }
 }
