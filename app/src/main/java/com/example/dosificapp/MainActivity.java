@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private LoginRepository userRepo = LoginRepository.getInstance();
     private Usuario user = userRepo.getLoggedInUser();
-    private LoginRepository loginRepository = LoginRepository.getInstance();
     private MaterialToolbar toolbar;
 
     @Override
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exit(){
-        loginRepository.logout();
+        userRepo.logout();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
@@ -73,8 +72,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        /*Log.d("CDA", "onBackPressed Called");
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));*/
-    }
+    public void onBackPressed() {}
 }

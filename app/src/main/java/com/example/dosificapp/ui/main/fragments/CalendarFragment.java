@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.dosificapp.R;
+import com.example.dosificapp.data.DosisRepository;
 import com.example.dosificapp.databinding.FragmentCalendarTabBinding;
 import com.example.dosificapp.dominio.CalendarDay;
 import com.example.dosificapp.ui.main.PageViewModel;

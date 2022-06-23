@@ -1,5 +1,9 @@
 package com.example.dosificapp.data;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+
 import com.example.dosificapp.dominio.Usuario;
 
 /**
@@ -35,7 +39,9 @@ public class LoginRepository {
         return this.user;
     }
 
-    public void setLoggedInUser(Usuario user) {
+    public void setLoggedInUser(Usuario user, Context context) {
+        context.getSharedPreferences("login", MODE_PRIVATE).edit().putString("user", user.getUser()).apply();
+        context.getSharedPreferences("login", MODE_PRIVATE).edit().putString("pass", user.getPassword()).apply();
         this.user = user;
     }
 }

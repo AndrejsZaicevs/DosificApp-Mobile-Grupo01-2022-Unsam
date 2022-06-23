@@ -26,6 +26,7 @@ import com.example.dosificapp.AlarmReceiver;
 import com.example.dosificapp.CalendarTab;
 import com.example.dosificapp.MainActivity;
 import com.example.dosificapp.R;
+import com.example.dosificapp.data.DosisRepository;
 import com.example.dosificapp.databinding.FragmentTomasBinding;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
@@ -54,9 +55,8 @@ public class TomasFragment extends AbstractFragment {
 
     private PageViewModelTomas pageViewModel;
     private FragmentTomasBinding binding;
-    private BackendService backendService = new BackendService("", getContext());
-    private Usuario usuario;
-    ArrayList<Dosis> listDataDosis = new ArrayList<>();
+
+    private DosisRepository dosisRepository = DosisRepository.getInstance();
 
     public static TomasFragment newInstance(int index) {
         TomasFragment fragment = new TomasFragment();
@@ -91,7 +91,6 @@ public class TomasFragment extends AbstractFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), CalendarTab.class);
-                intent.putExtra("dosis", listDataDosis);
                 startActivity(intent);
             }
         });
@@ -119,10 +118,10 @@ public class TomasFragment extends AbstractFragment {
                     @Override
                     public void onResponse(String response) {
                         // Aca esta bien
-                        listDataDosis.clear();
+                        dosisRepository.clearDosis();
                         try{
                             JSONArray jsonResponse = new JSONArray(response);
-                            /*for(int i = 0; i < jsonResponse.length(); i++){
+                            for(int i = 0; i < jsonResponse.length(); i++){
                                 // Dosis
                                 JSONObject dosisJson = new JSONObject(jsonResponse.getString(i));
                                 JSONArray tomas = new JSONArray(dosisJson.getString("Tomas"));
@@ -138,17 +137,17 @@ public class TomasFragment extends AbstractFragment {
                                     );
                                     if(dosis.getCalendar().getTimeInMillis() - System.currentTimeMillis() > 0)
                                     {
-                                        listDataDosis.add(dosis);
+                                        dosisRepository.addDosis(dosis);
                                     }
                                 }
-                            }*/
-                            Dosis dosis = new Dosis(1L, 1L, "2022-06-20 10:00:00","Test", 1);
+                            }
+                            /*Dosis dosis = new Dosis(1L, 1L, "2022-06-20 10:00:00","Test", 1);
                             dosis.setIntervaloPost(10);
                             dosis.setMaxPost(3);
-                            listDataDosis.add(dosis);
-                            DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, listDataDosis);
+                            listDataDosis.add(dosis);*/
+                            DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, dosisRepository.getDosisVigentes());
                             listViewDosis.setAdapter(adapter);
-                            setAlarms(listDataDosis);
+                            setAlarms();
 
                         }catch (JSONException e){
                             Log.d("ERROR RECUPERAR RECETAS", e.toString());
@@ -164,22 +163,20 @@ public class TomasFragment extends AbstractFragment {
             @Override
             protected Map<String, String> getParams(){
                 Map<String,String> params = new HashMap<String,String>();
-                params.put("Inicio","2022-06-21");
-                params.put("Fin","2022-06-24");
+                params.put("Inicio","2022-06-23");
+                params.put("Fin","2022-06-26");
                 return params;
             }
         };;
         Volley.newRequestQueue(getContext()).add(stringRequest);
     }
 
-    private void setAlarms(ArrayList<Dosis> listDataDosis){
-        for (Dosis dosis: listDataDosis) {
+    private void setAlarms(){
+        for (Dosis dosis: dosisRepository.getDosisVigentes()) {
 
             AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
             Intent intent = new Intent(getContext(), AlarmReceiver.class);
-            intent.putExtra("dosis", dosis);
-            Gson gson = new Gson();
-            intent.setAction(gson.toJson(dosis));
+            intent.setAction(dosis.getDoseTakeid().toString());
             intent.addFlags(0);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

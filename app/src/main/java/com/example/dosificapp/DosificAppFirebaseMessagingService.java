@@ -11,7 +11,6 @@ public class DosificAppFirebaseMessagingService extends FirebaseMessagingService
 
     private String TAG = "FirebaseService";
 
-
     @Override
     public void onNewToken(@NonNull String token){
         super.onNewToken(token);

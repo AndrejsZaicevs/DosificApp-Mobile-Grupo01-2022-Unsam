@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.dosificapp.data.DosisRepository;
 import com.example.dosificapp.databinding.ActivityAlertBinding;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
@@ -38,11 +39,9 @@ import java.util.Map;
 
 public class AlertActivity extends AppCompatActivity {
 
+    private DosisRepository dosisRepository = DosisRepository.getInstance();
     private ActivityAlertBinding binding;
-    private String dosis;
-    private String gotJson;
-    private int intervalo;
-    private int maxPost;
+    private Dosis dosis;
     private int dosisId;
     Ringtone r;
 
@@ -58,19 +57,12 @@ public class AlertActivity extends AppCompatActivity {
 
         binding = ActivityAlertBinding.inflate(getLayoutInflater());
 
-        gotJson = getIntent().getExtras().getString("dosis");
+        dosisId = getIntent().getExtras().getInt("dosis");
 
-        try {
-            JSONObject dosisJson = new JSONObject(gotJson);
-            dosisId = dosisJson.getInt("doseTakeid");
-            intervalo = dosisJson.getInt("intervaloPost");
-            maxPost = dosisJson.getInt("maxPost");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        dosis = dosisRepository.getDosisTomaById(dosisId);
 
         TextView textDosis = (TextView) findViewById(R.id.medicamento);
-        textDosis.setText(dosis);
+        textDosis.setText(dosis.getName());
 
         try {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
@@ -87,18 +79,18 @@ public class AlertActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 nofify("PostergarNotificacionDosis");
-                Toast.makeText(getApplicationContext(), "Toma pospuesta por "+intervalo+" minutos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Toma pospuesta por "+dosis.getIntervaloPost()+" minutos", Toast.LENGTH_SHORT).show();
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.add(Calendar.SECOND, intervalo);
+                calendar.add(Calendar.SECOND, dosis.getIntervaloPost());
 
                 //if(calendar.getTimeInMillis() + System.currentTimeMillis() < 0){
 
                     AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                     Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
                     Gson gson = new Gson();
-                    intent.setAction(gotJson);
+                    intent.setAction(String.valueOf(dosisId));
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);

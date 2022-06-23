@@ -44,6 +44,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(loginRepository.isLoggedIn()){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
+
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -120,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        loginRepository.setLoggedInUser(usuario);
+                        loginRepository.setLoggedInUser(usuario, getApplicationContext());
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }
                 }, new Response.ErrorListener() {

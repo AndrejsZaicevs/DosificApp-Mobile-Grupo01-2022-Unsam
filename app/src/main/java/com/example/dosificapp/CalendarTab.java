@@ -2,6 +2,7 @@ package com.example.dosificapp;
 
 import android.os.Bundle;
 
+import com.example.dosificapp.data.DosisRepository;
 import com.example.dosificapp.dominio.CalendarItem;
 import com.example.dosificapp.dominio.Dosis;
 import com.google.android.material.tabs.TabLayout;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class CalendarTab extends AppCompatActivity {
 
     private ActivityCalendarTabBinding binding;
-    private ArrayList<Dosis> listaDosis;
+    private DosisRepository dosisRepository = DosisRepository.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +27,7 @@ public class CalendarTab extends AppCompatActivity {
         binding = ActivityCalendarTabBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        listaDosis = (ArrayList<Dosis>) getIntent().getSerializableExtra("dosis");
-
-        CalendarSectionsPagerAdapter sectionsPagerAdapter = new CalendarSectionsPagerAdapter(this, getSupportFragmentManager(),listaDosis);
+        CalendarSectionsPagerAdapter sectionsPagerAdapter = new CalendarSectionsPagerAdapter(this, getSupportFragmentManager(),dosisRepository.getListaDosis());
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
