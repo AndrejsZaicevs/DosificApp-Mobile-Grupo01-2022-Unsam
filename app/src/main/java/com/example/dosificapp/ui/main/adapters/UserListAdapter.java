@@ -14,18 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.dosificapp.R;
-import com.example.dosificapp.dominio.Acomp;
+import com.example.dosificapp.dominio.Usuario;
 
 import java.util.ArrayList;
 import java.util.Base64;
 
-public class AcompListAdapter extends ArrayAdapter<Acomp> {
+public class UserListAdapter extends ArrayAdapter<Usuario> {
 
     private Context mContext;
     private int mResource;
 
-    public AcompListAdapter(@NonNull Context context, int resource, ArrayList<Acomp> acomps) {
-        super(context, resource, acomps);
+    public UserListAdapter(@NonNull Context context, int resource, ArrayList<Usuario> users) {
+        super(context, resource, users);
         mContext = context;
         mResource = resource;
     }
@@ -33,7 +33,7 @@ public class AcompListAdapter extends ArrayAdapter<Acomp> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String name = getItem(position).getName();
+        String name = getItem(position).getNombre();
         String status = getItem(position).getStatus();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -43,7 +43,7 @@ public class AcompListAdapter extends ArrayAdapter<Acomp> {
         TextView statusTV = convertView.findViewById(R.id.statusAcomp);
         ImageView image = convertView.findViewById(R.id.imageAcompañante);
 
-        byte[] imageBytes = Base64.getDecoder().decode(getItem(position).getBase64image());
+        byte[] imageBytes = Base64.getDecoder().decode(getItem(position).getImageBase64());
         Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
         image.setImageBitmap(decodedImage);

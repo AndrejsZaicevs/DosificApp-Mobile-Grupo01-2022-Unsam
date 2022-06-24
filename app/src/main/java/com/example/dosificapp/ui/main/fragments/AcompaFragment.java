@@ -1,13 +1,10 @@
 package com.example.dosificapp.ui.main.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,22 +16,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.dosificapp.MainActivity;
 import com.example.dosificapp.R;
 import com.example.dosificapp.databinding.FragmentAcompBinding;
-import com.example.dosificapp.dominio.Acomp;
 import com.example.dosificapp.dominio.Dosis;
-import com.example.dosificapp.ui.login.LoginActivity;
+import com.example.dosificapp.dominio.Usuario;
 import com.example.dosificapp.ui.main.PageViewModelAcomp;
-import com.example.dosificapp.ui.main.adapters.AcompListAdapter;
-import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
+import com.example.dosificapp.ui.main.adapters.UserListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class AcompaFragment  extends AbstractFragment {
 
@@ -42,7 +35,7 @@ public class AcompaFragment  extends AbstractFragment {
 
     private PageViewModelAcomp pageViewModel;
     private FragmentAcompBinding binding;
-    ArrayList<Acomp> listDataAcomp = new ArrayList<Acomp>();
+    ArrayList<Usuario> listDataAcomp = new ArrayList<Usuario>();
     ArrayList<Dosis> listTomasAcomp = new ArrayList<Dosis>();
     ListView listViewDosis;
 
@@ -104,10 +97,10 @@ public class AcompaFragment  extends AbstractFragment {
                             for(int i = 0; i < jsonResponse.length(); i++){
                                 JSONObject dosisObjeto = jsonResponse.getJSONObject(i);
                                 String test = dosisObjeto.getString("dateTime");
-                                Acomp acomp = new Acomp("Test1","Estado Test", imageBase64);
-                                listDataAcomp.add(acomp);
+                                Usuario user = new Usuario("Test1","Estado Test", imageBase64);
+                                listDataAcomp.add(user);
                             }
-                            AcompListAdapter adapter = new AcompListAdapter(getContext(), R.layout.listview_acomp, listDataAcomp);
+                            UserListAdapter adapter = new UserListAdapter(getContext(), R.layout.listview_acomp, listDataAcomp);
                             listViewDosis.setAdapter(adapter);
 
                         }catch (JSONException e){

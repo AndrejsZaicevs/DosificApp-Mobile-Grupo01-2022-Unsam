@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.dosificapp.R;
-import com.example.dosificapp.dominio.Acomp;
-import com.example.dosificapp.dominio.CalendarDay;
 import com.example.dosificapp.dominio.CalendarItem;
 
 import java.util.ArrayList;

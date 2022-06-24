@@ -19,13 +19,25 @@ public class Usuario implements Serializable {
     private String password;
     private String user;
     private String imageBase64;
+    private String status;
 
-    public Usuario(){
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Usuario(){}
+
+    public Usuario(String _name, String _status, String _base64image){
+        nombre = _name;
+        status = _status;
+        imageBase64 = _base64image;
     }
 
     public Usuario(String user, String password) {
-        this.type = type;
         this.password = password;
         this.user = user;
     }

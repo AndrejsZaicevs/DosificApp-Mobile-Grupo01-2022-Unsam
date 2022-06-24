@@ -27,6 +27,7 @@ import com.example.dosificapp.CalendarTab;
 import com.example.dosificapp.MainActivity;
 import com.example.dosificapp.R;
 import com.example.dosificapp.data.DosisRepository;
+import com.example.dosificapp.data.LoginRepository;
 import com.example.dosificapp.databinding.FragmentTomasBinding;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
@@ -42,6 +43,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +60,7 @@ public class TomasFragment extends AbstractFragment {
     private FragmentTomasBinding binding;
 
     private DosisRepository dosisRepository = DosisRepository.getInstance();
+    private LoginRepository loginRepository = LoginRepository.getInstance();
 
     public static TomasFragment newInstance(int index) {
         TomasFragment fragment = new TomasFragment();
@@ -112,7 +116,7 @@ public class TomasFragment extends AbstractFragment {
     public String getName() { return "Proximas tomas"; }
 
     private void getDoses(ListView listViewDosis){
-        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerListadoDosis/" + 1;
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerListadoDosis/" + loginRepository.getLoggedInUser().getId();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -141,10 +145,6 @@ public class TomasFragment extends AbstractFragment {
                                     }
                                 }
                             }
-                            /*Dosis dosis = new Dosis(1L, 1L, "2022-06-20 10:00:00","Test", 1);
-                            dosis.setIntervaloPost(10);
-                            dosis.setMaxPost(3);
-                            listDataDosis.add(dosis);*/
                             DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, dosisRepository.getDosisVigentes());
                             listViewDosis.setAdapter(adapter);
                             setAlarms();
@@ -162,9 +162,11 @@ public class TomasFragment extends AbstractFragment {
         }){
             @Override
             protected Map<String, String> getParams(){
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
                 Map<String,String> params = new HashMap<String,String>();
-                params.put("Inicio","2022-06-23");
-                params.put("Fin","2022-06-26");
+                params.put("Inicio",dtf.format(LocalDate.now()));
+                params.put("Fin",dtf.format(LocalDate.now().plusDays(3)));
                 return params;
             }
         };;
