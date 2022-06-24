@@ -42,7 +42,7 @@ public class UserListAdapter extends ArrayAdapter<Usuario> {
         TextView nameTV = convertView.findViewById(R.id.nameAcomp);
         TextView statusTV = convertView.findViewById(R.id.statusAcomp);
 
-        if(!getItem(position).getImageBase64().isEmpty()) {
+        if(getItem(position).getImageBase64() != null) {
             ImageView image = convertView.findViewById(R.id.imageAcompañante);
 
             byte[] imageBytes = Base64.getDecoder().decode(getItem(position).getImageBase64());

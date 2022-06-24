@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                login("x@z.com", "1234");
+                login("a@1.com", "1234");
             }
         });
 

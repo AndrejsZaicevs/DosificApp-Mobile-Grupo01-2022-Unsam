@@ -60,16 +60,16 @@ public class PerfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_perfil);
 
         loginRepository = LoginRepository.getInstance();
-        ActivityPerfilBinding binding = ActivityPerfilBinding.inflate(getLayoutInflater());
+        binding = ActivityPerfilBinding.inflate(getLayoutInflater());
         Usuario user = loginRepository.getLoggedInUser();
         ArrayList<Usuario> listaAcomp = new ArrayList<>();
 
-        txtNombre = binding.profileName;
-        txtApellido = binding.profileLastName;
-        txtEmail = binding.profileEmail;
-        txtCelular = binding.profilePhone;
+        txtNombre = findViewById(R.id.profileName);
+        txtApellido = findViewById(R.id.profileLastName);
+        txtEmail = findViewById(R.id.profileEmail);
+        txtCelular = findViewById(R.id.profilePhone);
 
-        lista = binding.listAcomp;
+        lista = findViewById(R.id.listAcomp);
 
         if(!user.getImageBase64().isEmpty()){
             ImageView image = findViewById(R.id.imageView);
@@ -83,8 +83,8 @@ public class PerfilActivity extends AppCompatActivity {
         txtEmail.setText(user.getEmail());
         txtCelular.setText(user.getNumero());
 
-        Button salir = binding.buttonSalir;
-        Button guardar = binding.buttonGuardar;
+        Button salir = findViewById(R.id.buttonSalir);
+        Button guardar = findViewById(R.id.buttonGuardar);
         salir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dosificapp.R;
+import com.example.dosificapp.data.LoginRepository;
 import com.example.dosificapp.databinding.FragmentAcompBinding;
 import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
@@ -35,8 +36,8 @@ public class AcompaFragment  extends AbstractFragment {
 
     private PageViewModelAcomp pageViewModel;
     private FragmentAcompBinding binding;
+    private LoginRepository loginRepository = LoginRepository.getInstance();
     ArrayList<Usuario> listDataAcomp = new ArrayList<Usuario>();
-    ArrayList<Dosis> listTomasAcomp = new ArrayList<Dosis>();
     ListView listViewDosis;
 
 
@@ -80,13 +81,37 @@ public class AcompaFragment  extends AbstractFragment {
     }
 
     private void getAcomp(){
-
-    }
-
-    private void getTomasAcomp(int idUser){
-
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerPacientesAcompaniados/" + loginRepository.getLoggedInUser().getId();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        listDataAcomp.clear();
+                        try{
+                            JSONArray acomps = new JSONArray(response);
+                            for(int i = 0; i < acomps.length(); i++){
+                                JSONObject acomp = acomps.getJSONObject(i);
+                                Usuario user = new Usuario();
+                                user.setNombre(acomp.getString("Nombre"));
+                                user.setApellido(acomp.getString("Apellido"));
+                                user.setStatus(acomp.getString("Apellido"));
+                                listDataAcomp.add(user);
+                            }
+                            UserListAdapter adapter = new UserListAdapter(getContext(), R.layout.listview_acomp, listDataAcomp);
+                            listViewDosis.setAdapter(adapter);
+                        }catch (JSONException e){
+                            Log.d("ERROR JSON", e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR VOLLEY", error.getMessage());
+            }
+        }){};;
+        Volley.newRequestQueue(getContext()).add(stringRequest);
     }
 
     @Override
-    public String getName() {return "Usuarios acompañados";}
+    public String getName() { return "USUARIOS ACOMPAÑADOS"; }
 }
