@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +24,18 @@ import com.example.dosificapp.data.LoginRepository;
 import com.example.dosificapp.databinding.ActivityAlertBinding;
 import com.example.dosificapp.databinding.ActivityMainBinding;
 import com.example.dosificapp.databinding.ActivityPerfilBinding;
+import com.example.dosificapp.dominio.Dosis;
 import com.example.dosificapp.dominio.Usuario;
 import com.example.dosificapp.ui.login.LoginActivity;
+import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
+import com.example.dosificapp.ui.main.adapters.UserListAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -33,27 +43,40 @@ import java.util.Map;
 
 public class PerfilActivity extends AppCompatActivity {
 
-    private final LoginRepository loginRepository = LoginRepository.getInstance();
-    private final ActivityPerfilBinding binding = ActivityPerfilBinding.inflate(getLayoutInflater());
-    private final Usuario user = loginRepository.getLoggedInUser();
-    private final ArrayList<Usuario> listaAcomp = new ArrayList<>();
+    private LoginRepository loginRepository;
+    private ActivityPerfilBinding binding;
+    private Usuario user;
+    private ArrayList<Usuario> listaAcomp = new ArrayList<>();
+    private ListView lista;
 
-    private final TextView txtNombre = binding.profileName;
-    private final TextView txtApellido = binding.profileLastName;
-    private final TextView txtEmail = binding.profileEmail;
-    private final TextView txtCelular = binding.profilePhone;
+    private TextView txtNombre;
+    private TextView txtApellido;
+    private TextView txtEmail;
+    private TextView txtCelular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
+        loginRepository = LoginRepository.getInstance();
+        ActivityPerfilBinding binding = ActivityPerfilBinding.inflate(getLayoutInflater());
+        Usuario user = loginRepository.getLoggedInUser();
+        ArrayList<Usuario> listaAcomp = new ArrayList<>();
 
-        ImageView image = findViewById(R.id.imageView);
+        txtNombre = binding.profileName;
+        txtApellido = binding.profileLastName;
+        txtEmail = binding.profileEmail;
+        txtCelular = binding.profilePhone;
 
-        byte[] imageBytes = Base64.getDecoder().decode(loginRepository.getLoggedInUser().getImageBase64());
-        Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-        image.setImageBitmap(Bitmap.createScaledBitmap(decodedImage, 120, 120, false));
+        lista = binding.listAcomp;
+
+        if(!user.getImageBase64().isEmpty()){
+            ImageView image = findViewById(R.id.imageView);
+            byte[] imageBytes = Base64.getDecoder().decode(loginRepository.getLoggedInUser().getImageBase64());
+            Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            image.setImageBitmap(Bitmap.createScaledBitmap(decodedImage, 120, 120, false));
+        }
 
         txtNombre.setText(user.getNombre());
         txtApellido.setText(user.getApellido());
@@ -75,6 +98,8 @@ public class PerfilActivity extends AppCompatActivity {
 
             }
         });
+
+        getListaAcompañantes();
     }
 
     private boolean verificarCampos(){
@@ -94,6 +119,35 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void getListaAcompañantes(){
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerDatosPaciente/" + loginRepository.getLoggedInUser().getId();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        listaAcomp.clear();
+                        try{
+                            JSONObject data = new JSONObject(response);
+                            JSONArray acomps = data.getJSONArray("Acompaniantes");
+                            for(int i = 0; i < acomps.length(); i++){
+                                JSONObject acomp = acomps.getJSONObject(i);
+                                Usuario user = new Usuario();
+                                user.setNombre(acomp.getString("Nombre"));
+                                user.setApellido(acomp.getString("Apellido"));
+                                user.setStatus(acomp.getString("Apellido"));
+                                listaAcomp.add(user);
+                            }
+                            UserListAdapter adapter = new UserListAdapter(getApplicationContext(), R.layout.listview_acomp, listaAcomp);
+                            lista.setAdapter(adapter);
+                        }catch (JSONException e){
 
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){};;
+        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
     }
 }

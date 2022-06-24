@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -58,6 +59,7 @@ public class TomasFragment extends AbstractFragment {
 
     private PageViewModelTomas pageViewModel;
     private FragmentTomasBinding binding;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private DosisRepository dosisRepository = DosisRepository.getInstance();
     private LoginRepository loginRepository = LoginRepository.getInstance();
@@ -90,6 +92,8 @@ public class TomasFragment extends AbstractFragment {
         View root = binding.getRoot();
 
         Button button = binding.buttonCrono;
+        mSwipeRefreshLayout = binding.pullToRefresh;
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +106,14 @@ public class TomasFragment extends AbstractFragment {
         // Cargo las dosis
         ListView listViewDosis = binding.listCrono;
         getDoses(listViewDosis);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getDoses(listViewDosis);
+            }
+        });
+
 
         return root;
     }
@@ -147,6 +159,7 @@ public class TomasFragment extends AbstractFragment {
                             }
                             DosisListAdapter adapter = new DosisListAdapter(getContext(), R.layout.listview_toma, dosisRepository.getDosisVigentes());
                             listViewDosis.setAdapter(adapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
                             setAlarms();
 
                         }catch (JSONException e){
@@ -165,8 +178,8 @@ public class TomasFragment extends AbstractFragment {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
 
                 Map<String,String> params = new HashMap<String,String>();
-                params.put("Inicio",dtf.format(LocalDate.now()));
-                params.put("Fin",dtf.format(LocalDate.now().plusDays(3)));
+                params.put("Inicio","");
+                params.put("Fin","");
                 return params;
             }
         };;

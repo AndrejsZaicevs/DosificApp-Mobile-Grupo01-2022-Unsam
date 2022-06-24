@@ -57,7 +57,8 @@ public class AlertActivity extends AppCompatActivity {
 
         binding = ActivityAlertBinding.inflate(getLayoutInflater());
 
-        dosisId = getIntent().getExtras().getInt("dosis");
+        dosisId = Integer.valueOf(getIntent().getAction());
+        //dosisId = getIntent().getExtras().getInt("dosis");
 
         dosis = dosisRepository.getDosisTomaById(dosisId);
 
@@ -83,7 +84,7 @@ public class AlertActivity extends AppCompatActivity {
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.add(Calendar.SECOND, dosis.getIntervaloPost());
+                calendar.add(Calendar.MINUTE, dosis.getIntervaloPost());
 
                 //if(calendar.getTimeInMillis() + System.currentTimeMillis() < 0){
 
@@ -120,7 +121,7 @@ public class AlertActivity extends AppCompatActivity {
         * api/PacienteAcompaniante/PostergarNotificacionDosis/{idDosisToma}
         * api/PacienteAcompaniante/ActualizarNotificacionDosis/{idDosisToma}
         * */
-        String url = getString(R.string.baseURL) + "api/PacienteAcompaniante/"+path+"/" + dosisId;
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/"+path+"/" + dosisId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

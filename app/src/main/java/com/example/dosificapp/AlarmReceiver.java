@@ -14,6 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent newIntent = new Intent(context, AlertActivity.class);
         String idDosis = intent.getAction();
         newIntent.putExtra("dosis", idDosis);
+        newIntent.setAction(idDosis);
         newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(newIntent);
     }
