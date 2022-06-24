@@ -10,9 +10,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.dosificapp.databinding.ActivityCreateAccountBinding;
 import com.example.dosificapp.databinding.ActivityPasswordBinding;
 import com.example.dosificapp.dominio.Usuario;
+
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Password extends AppCompatActivity {
 
@@ -62,6 +71,27 @@ public class Password extends AppCompatActivity {
     }
 
     private void sendUser(){
-        Toast.makeText(getApplicationContext(), "Mando a crear", Toast.LENGTH_SHORT).show();
+        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/CrearAcompaniante";
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Cuenta creada", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error en al creacion de cuenta", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams(){
+                Map<String,String> params = new HashMap<String,String>();
+                String horrendo = "{\"Nombre\":\""+usuario.getNombre()+"\",\"Apellido\":\""+usuario.getNombre()+"\",\"Email\":\""+usuario.getEmail()+"\",\"Contrasenia\":\""+usuario.getPassword()+"\",\"NumeroTel\":\""+usuario.getNumero()+"\",\"Documento\":\""+usuario.getDocumento()+"\",\"TipoDocumento\":1,\"IdOrganizacion\":1,\"TipoUsuario\":1}";
+                params.put("Acompaniante",horrendo);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
     }
 }

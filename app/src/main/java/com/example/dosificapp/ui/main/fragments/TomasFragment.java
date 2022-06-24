@@ -151,6 +151,7 @@ public class TomasFragment extends AbstractFragment {
                                             dosisJson.getString("Descripcion"),
                                             dosisJson.getInt("Unidades")
                                     );
+                                    dosis.setIntervaloPost(dosisJson.getInt("TiempoMaximoPostergacion"));
                                     if(dosis.getCalendar().getTimeInMillis() - System.currentTimeMillis() > 0)
                                     {
                                         dosisRepository.addDosis(dosis);

@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginRepository loginRepository = LoginRepository.getInstance();
     private ActivityLoginBinding binding;
+    private String email;
     ProgressBar loadingProgressBar;
 
     @Override
@@ -55,9 +56,6 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final Button registerButton = binding.register;
-        final Button paciente = binding.paciente;
-        final Button acompa = binding.acomp;
-        final Button ambos = binding.ambos;
         loadingProgressBar = binding.loading;
 
         //FirebaseMessaging.getInstance().deleteToken();
@@ -66,7 +64,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
+                email = usernameEditText.getText().toString();
+                login(email, passwordEditText.getText().toString());
             }
         });
 
@@ -77,30 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        paciente.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                login("a@1.com", "1234");
-            }
-        });
-
-        acompa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                login("acompa", "acompa");
-            }
-        });
-
-        ambos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                login("ambos", "ambos");
-            }
-        });
-    }
+   }
 
     private void login(String user, String pass){
         String url = getString(R.string.baseURL) + "/api/Base/Login/";
@@ -121,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                             usuario.setDocumento(usuarioJson.getString("Documento"));
                             usuario.setImageBase64(usuarioJson.getString("Foto"));
                             usuario.setTiposUsuario(jsonObject.getJSONArray("TiposUsuarios"));
+                            usuario.setEmail(email);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

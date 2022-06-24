@@ -61,8 +61,8 @@ public class PerfilActivity extends AppCompatActivity {
 
         loginRepository = LoginRepository.getInstance();
         binding = ActivityPerfilBinding.inflate(getLayoutInflater());
-        Usuario user = loginRepository.getLoggedInUser();
-        ArrayList<Usuario> listaAcomp = new ArrayList<>();
+        user = loginRepository.getLoggedInUser();
+        listaAcomp = new ArrayList<>();
 
         txtNombre = findViewById(R.id.profileName);
         txtApellido = findViewById(R.id.profileLastName);
@@ -133,7 +133,7 @@ public class PerfilActivity extends AppCompatActivity {
                                 Usuario user = new Usuario();
                                 user.setNombre(acomp.getString("Nombre"));
                                 user.setApellido(acomp.getString("Apellido"));
-                                user.setStatus(acomp.getString("Apellido"));
+                                user.setEmail(acomp.getString("Email"));
                                 listaAcomp.add(user);
                             }
                             UserListAdapter adapter = new UserListAdapter(getApplicationContext(), R.layout.listview_acomp, listaAcomp);

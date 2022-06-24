@@ -94,7 +94,7 @@ public class AcompaFragment  extends AbstractFragment {
                                 Usuario user = new Usuario();
                                 user.setNombre(acomp.getString("Nombre"));
                                 user.setApellido(acomp.getString("Apellido"));
-                                user.setStatus(acomp.getString("Apellido"));
+                                user.setEmail(acomp.getString("Email"));
                                 listDataAcomp.add(user);
                             }
                             UserListAdapter adapter = new UserListAdapter(getContext(), R.layout.listview_acomp, listDataAcomp);

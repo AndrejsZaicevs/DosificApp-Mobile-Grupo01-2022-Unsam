@@ -33,8 +33,8 @@ public class UserListAdapter extends ArrayAdapter<Usuario> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String name = getItem(position).getNombre();
-        String status = getItem(position).getStatus();
+        String name = getItem(position).getNombre() + " " + getItem(position).getApellido();
+        String status = getItem(position).getEmail();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
