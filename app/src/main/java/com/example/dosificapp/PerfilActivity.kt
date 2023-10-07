@@ -1,153 +1,76 @@
-package com.example.dosificapp;
+package com.example.dosificapp
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.dosificapp.data.LoginRepository
+import com.example.dosificapp.databinding.ActivityPerfilBinding
+import com.example.dosificapp.dominio.Usuario
+import com.example.dosificapp.service.UserService
+import com.example.dosificapp.ui.main.adapters.UserListAdapter
+import kotlinx.coroutines.launch
+import java.util.Base64
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+class PerfilActivity : AppCompatActivity() {
+    private lateinit var loginRepository: LoginRepository
+    private lateinit var userService: UserService
+    private lateinit var binding: ActivityPerfilBinding
+    private val listaAcomp: ArrayList<Usuario> = ArrayList()
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.dosificapp.data.LoginRepository;
-import com.example.dosificapp.databinding.ActivityAlertBinding;
-import com.example.dosificapp.databinding.ActivityMainBinding;
-import com.example.dosificapp.databinding.ActivityPerfilBinding;
-import com.example.dosificapp.dominio.Dosis;
-import com.example.dosificapp.dominio.Usuario;
-import com.example.dosificapp.ui.login.LoginActivity;
-import com.example.dosificapp.ui.main.adapters.DosisListAdapter;
-import com.example.dosificapp.ui.main.adapters.UserListAdapter;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityPerfilBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+        loginRepository = LoginRepository.getInstance()
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+        val user = loginRepository.loggedInUser
 
-public class PerfilActivity extends AppCompatActivity {
+        user?.let {
+            if (it.imageBase64.isNotEmpty()) {
+                val imageBytes = Base64.getDecoder().decode(it.imageBase64)
+                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                binding.imageView.setImageBitmap(Bitmap.createScaledBitmap(decodedImage, 120, 120, false))
+            }
 
-    private LoginRepository loginRepository;
-    private ActivityPerfilBinding binding;
-    private Usuario user;
-    private ArrayList<Usuario> listaAcomp = new ArrayList<>();
-    private ListView lista;
-
-    private TextView txtNombre;
-    private TextView txtApellido;
-    private TextView txtEmail;
-    private TextView txtCelular;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil);
-
-        loginRepository = LoginRepository.getInstance();
-        binding = ActivityPerfilBinding.inflate(getLayoutInflater());
-        user = loginRepository.getLoggedInUser();
-        listaAcomp = new ArrayList<>();
-
-        txtNombre = findViewById(R.id.profileName);
-        txtApellido = findViewById(R.id.profileLastName);
-        txtEmail = findViewById(R.id.profileEmail);
-        txtCelular = findViewById(R.id.profilePhone);
-
-        lista = findViewById(R.id.listAcomp);
-
-        if(!user.getImageBase64().isEmpty()){
-            ImageView image = findViewById(R.id.imageView);
-            byte[] imageBytes = Base64.getDecoder().decode(loginRepository.getLoggedInUser().getImageBase64());
-            Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            image.setImageBitmap(Bitmap.createScaledBitmap(decodedImage, 120, 120, false));
+            binding.profileName.setText(it.nombre)
+            binding.profileLastName.setText(it.apellido)
+            binding.profileEmail.setText(it.email)
+            binding.profilePhone.setText(it.numero)
         }
 
-        txtNombre.setText(user.getNombre());
-        txtApellido.setText(user.getApellido());
-        txtEmail.setText(user.getEmail());
-        txtCelular.setText(user.getNumero());
+        binding.buttonSalir.setOnClickListener { finish() }
+        binding.buttonGuardar.setOnClickListener { enviarUser() }
 
-        Button salir = findViewById(R.id.buttonSalir);
-        Button guardar = findViewById(R.id.buttonGuardar);
-        salir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        guardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        getListaAcompañantes();
+        loadListaAcompaniantes()
     }
 
-    private boolean verificarCampos(){
-        return (
-            txtNombre.getText().toString().length() > 0 &&
-            txtApellido.getText().toString().length() > 0 &&
-            txtEmail.getText().toString().length() > 0 &&
-            txtCelular.getText().toString().length() > 0
-        );
+    private fun verificarCampos(): Boolean {
+        return binding.profileName.text.isNotEmpty() &&
+                binding.profileLastName.text.isNotEmpty() &&
+                binding.profileEmail.text.isNotEmpty() &&
+                binding.profilePhone.text.isNotEmpty()
     }
 
-    private void enviarUser(){
-        if(!verificarCampos()){
-            Toast.makeText(getApplicationContext(), "Verifique que no haya campos vacios", Toast.LENGTH_SHORT).show();
-            return;
+    private fun enviarUser() {
+        if (!verificarCampos()) {
+            Toast.makeText(this, "Verifique que no haya campos vacios", Toast.LENGTH_SHORT).show()
         }
+        // Add any logic to send the user data if needed
     }
 
-    private void getListaAcompañantes(){
-        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/ObtenerDatosPaciente/" + loginRepository.getLoggedInUser().getId();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        listaAcomp.clear();
-                        try{
-                            JSONObject data = new JSONObject(response);
-                            JSONArray acomps = data.getJSONArray("Acompaniantes");
-                            for(int i = 0; i < acomps.length(); i++){
-                                JSONObject acomp = acomps.getJSONObject(i);
-                                Usuario user = new Usuario();
-                                user.setNombre(acomp.getString("Nombre"));
-                                user.setApellido(acomp.getString("Apellido"));
-                                user.setEmail(acomp.getString("Email"));
-                                listaAcomp.add(user);
-                            }
-                            UserListAdapter adapter = new UserListAdapter(getApplicationContext(), R.layout.listview_acomp, listaAcomp);
-                            lista.setAdapter(adapter);
-                        }catch (JSONException e){
+    private fun loadListaAcompaniantes() {
+        lifecycleScope.launch {
+            val userId = loginRepository.loggedInUser?.id ?: return@launch
+            val users = userService.getListaAcompaniantes(userId.toString())
+            listaAcomp.clear()
+            listaAcomp.addAll(users)
 
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){};;
-        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
+            val adapter = UserListAdapter(this@PerfilActivity, R.layout.listview_acomp, listaAcomp)
+            binding.listAcomp.adapter = adapter
+        }
     }
 }

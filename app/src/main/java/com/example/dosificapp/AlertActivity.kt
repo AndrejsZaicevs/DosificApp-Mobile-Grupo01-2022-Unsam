@@ -1,139 +1,105 @@
-package com.example.dosificapp;
+package com.example.dosificapp
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.media.Ringtone
+import android.net.Uri
+import android.os.Bundle
+import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import com.example.dosificapp.data.DosisRepository
+import com.example.dosificapp.databinding.ActivityAlertBinding
+import com.example.dosificapp.dominio.Dosis
+import com.example.dosificapp.service.DosesService
+import java.util.Calendar
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.dosificapp.data.DosisRepository;
-import com.example.dosificapp.databinding.ActivityAlertBinding;
-import com.example.dosificapp.dominio.Dosis;
-import com.example.dosificapp.dominio.Usuario;
-import com.example.dosificapp.ui.login.LoginActivity;
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-public class AlertActivity extends AppCompatActivity {
-
-    private DosisRepository dosisRepository = DosisRepository.getInstance();
-    private ActivityAlertBinding binding;
-    private Dosis dosis;
-    private int dosisId;
-    Ringtone r;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alert);
-
-        final Window win= getWindow();
-        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.media.RingtoneManager
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 
 
-        binding = ActivityAlertBinding.inflate(getLayoutInflater());
+class AlertActivity : AppCompatActivity() {
 
-        dosisId = Integer.valueOf(getIntent().getAction());
-        //dosisId = getIntent().getExtras().getInt("dosis");
+    private val dosisRepository = DosisRepository.getInstance()
+    private val dosisService = DosesService()
+    private lateinit var binding: ActivityAlertBinding
 
-        dosis = dosisRepository.getDosisTomaById(dosisId);
+    private var ringtone: Ringtone? = null
 
-        TextView textDosis = (TextView) findViewById(R.id.medicamento);
-        textDosis.setText(dosis.getName());
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupWindow()
+        binding = ActivityAlertBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        intent.action?.toLongOrNull()?.let { dosisId ->
+            val dosis = dosisRepository.getDosisTomaById(dosisId)
 
-        Button post = findViewById(R.id.post);
-        Button tomar =  findViewById(R.id.tomar);
+            setupRingtone()
+            displayDosisName(dosis?.name)
+            setupButtons(dosis)
 
-        post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nofify("PostergarNotificacionDosis");
-                Toast.makeText(getApplicationContext(), "Toma pospuesta por "+dosis.getIntervaloPost()+" minutos", Toast.LENGTH_SHORT).show();
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.add(Calendar.MINUTE, dosis.getIntervaloPost());
-
-                //if(calendar.getTimeInMillis() + System.currentTimeMillis() < 0){
-
-                    AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                    Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                    Gson gson = new Gson();
-                    intent.setAction(String.valueOf(dosisId));
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                //}
-
-                r.stop();
-                finish();
-            }
-        });
-
-        tomar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nofify("ConfirmarTomaDosis");
-                Toast.makeText(getApplicationContext(), "Toma Confirmada", Toast.LENGTH_SHORT).show();
-                r.stop();
-                finish();
-            }
-        });
-
-        nofify("ActualizarNotificacionDosis");
+            lifecycleScope.launch { dosisService.actualizarNotificacionDosis(dosisId) }
+        } ?: throw RuntimeException("Could not retrieve dosisId in AlertActivity")
     }
 
-    private void nofify(String path){
-        /*
-        * api/PacienteAcompaniante/ConfirmarTomaDosis/{idDosisToma}
-        * api/PacienteAcompaniante/PostergarNotificacionDosis/{idDosisToma}
-        * api/PacienteAcompaniante/ActualizarNotificacionDosis/{idDosisToma}
-        * */
-        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/"+path+"/" + dosisId;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Resṕonse", response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Resṕonse", error.toString());
+    private fun setupWindow() {
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
+    }
+
+    private fun setupRingtone() {
+        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        ringtone = RingtoneManager.getRingtone(applicationContext, notification)
+        ringtone?.play()
+    }
+
+    private fun displayDosisName(name: String?) {
+        binding.medicamento.text = name
+    }
+
+    private fun setupButtons(dosis: Dosis) {
+        binding.post.setOnClickListener {
+            lifecycleScope.launch {
+                dosisService.postergarNotificacionDosis(dosis.doseTakeid)
+                Toast.makeText(applicationContext, "Toma pospuesta por ${dosis.intervaloPost} minutos", Toast.LENGTH_SHORT).show()
+                scheduleAlarm(dosis.intervaloPost, dosis.doseTakeid)
+                ringtone?.stop()
+                finish()
             }
-        }){};
-        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
+        }
+
+        binding.tomar.setOnClickListener {
+            lifecycleScope.launch {
+                dosisService.confirmTomaDosis(dosis.doseTakeid)
+                Toast.makeText(applicationContext, "Toma Confirmada", Toast.LENGTH_SHORT).show()
+                ringtone?.stop()
+                finish()
+            }
+        }
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private fun scheduleAlarm(minutes: Int, dosisId: Long) {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            add(Calendar.MINUTE, minutes)
+        }
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
+            action = dosisId.toString()
+        }
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 }

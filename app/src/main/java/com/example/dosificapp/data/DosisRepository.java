@@ -2,7 +2,11 @@ package com.example.dosificapp.data;
 
 import com.example.dosificapp.dominio.Dosis;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class DosisRepository {
 
@@ -31,9 +35,9 @@ public class DosisRepository {
         return null;
     }
 
-    public Dosis getDosisTomaById(int id){
+    public Dosis getDosisTomaById(Long id){
         for (Dosis d: getListaDosis()) {
-            if(d.getDoseTakeid() == id){
+            if(Objects.equals(d.getDoseTakeid(), id)){
                 return d;
             }
         }
@@ -68,5 +72,9 @@ public class DosisRepository {
             }
         }
         return dosisVigentes;
+    }
+
+    public void setDoses(@NotNull List<? extends Dosis> doses) {
+        listaDosis.addAll(doses);
     }
 }

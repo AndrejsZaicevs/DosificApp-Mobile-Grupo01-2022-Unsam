@@ -1,97 +1,43 @@
-package com.example.dosificapp;
+package com.example.dosificapp
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.dosificapp.databinding.ActivityPasswordBinding
+import com.example.dosificapp.dominio.Usuario
+import com.example.dosificapp.service.UserService
+import kotlinx.coroutines.launch
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+class Password : AppCompatActivity() {
+    private lateinit var binding: ActivityPasswordBinding
+    private val userService = UserService()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.dosificapp.databinding.ActivityCreateAccountBinding;
-import com.example.dosificapp.databinding.ActivityPasswordBinding;
-import com.example.dosificapp.dominio.Usuario;
+        val usuario = intent.getSerializableExtra("user") as Usuario
+        binding.textUsuario.text = usuario.nombreApellido
 
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+        binding.buttonContinuar.setOnClickListener {
+            val pass = binding.editTextTextPassword.text.toString()
+            val confirmPass = binding.editTextTextPasswordConfirm.text.toString()
 
-public class Password extends AppCompatActivity {
-
-    private Usuario usuario;
-    private ActivityPasswordBinding binding;
-    private TextView user;
-
-    private Button confirm, tyc;
-    private EditText password, confirmPassword;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        binding = ActivityPasswordBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        usuario = (Usuario) getIntent().getSerializableExtra("user");
-
-        confirm = binding.buttonContinuar;
-        tyc = binding.buttontyc;
-        user = binding.textUsuario;
-
-        password = binding.editTextTextPassword;
-        confirmPassword = binding.editTextTextPasswordConfirm;
-
-        user.setText(usuario.getNombreApellido());
-
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(password.getText().toString().length() == 0 || confirmPassword.getText().toString().length() == 0){
-                    Toast.makeText(getApplicationContext(), "Complete los campos de contraseña", Toast.LENGTH_SHORT).show();
-                    return;
+            when {
+                pass.isEmpty() || confirmPass.isEmpty() -> showToast("Complete los campos de contraseña")
+                pass != confirmPass -> showToast("Las contraseñas no coinciden")
+                else -> {
+                    usuario.password = pass
+                    lifecycleScope.launch {
+                        userService.createUser(usuario)
+                    }
                 }
-
-                if(!password.getText().toString().equals(confirmPassword.getText().toString())){
-                    Toast.makeText(getApplicationContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                usuario.setPassword(password.getText().toString());
-                sendUser();
             }
-        });
-
+        }
     }
 
-    private void sendUser(){
-        String url = getString(R.string.baseURL) + "/api/PacienteAcompaniante/CrearAcompaniante";
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), "Cuenta creada", Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error en al creacion de cuenta", Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams(){
-                Map<String,String> params = new HashMap<String,String>();
-                String horrendo = "{\"Nombre\":\""+usuario.getNombre()+"\",\"Apellido\":\""+usuario.getNombre()+"\",\"Email\":\""+usuario.getEmail()+"\",\"Contrasenia\":\""+usuario.getPassword()+"\",\"NumeroTel\":\""+usuario.getNumero()+"\",\"Documento\":\""+usuario.getDocumento()+"\",\"TipoDocumento\":1,\"IdOrganizacion\":1,\"TipoUsuario\":1}";
-                params.put("Acompaniante",horrendo);
-                return params;
-            }
-        };
-        Volley.newRequestQueue(getApplicationContext()).add(stringRequest);
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
