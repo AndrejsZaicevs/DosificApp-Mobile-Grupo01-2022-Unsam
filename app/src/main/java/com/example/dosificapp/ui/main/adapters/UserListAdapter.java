@@ -16,15 +16,15 @@ import androidx.annotation.Nullable;
 import com.example.dosificapp.R;
 import com.example.dosificapp.dominio.Usuario;
 
-import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class UserListAdapter extends ArrayAdapter<Usuario> {
 
     private Context mContext;
     private int mResource;
 
-    public UserListAdapter(@NonNull Context context, int resource, ArrayList<Usuario> users) {
+    public UserListAdapter(@NonNull Context context, int resource, List<Usuario> users) {
         super(context, resource, users);
         mContext = context;
         mResource = resource;

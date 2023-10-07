@@ -13,15 +13,14 @@ import androidx.annotation.Nullable;
 import com.example.dosificapp.R;
 import com.example.dosificapp.dominio.Dosis;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 public class DosisListAdapter extends ArrayAdapter<Dosis> {
 
     private Context mContext;
     int mResource;
 
-    public DosisListAdapter(@NonNull Context context, int resource, ArrayList<Dosis> objects) {
+    public DosisListAdapter(@NonNull Context context, int resource, List<Dosis> objects) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
