@@ -1,8 +1,11 @@
 package com.example.dosificapp.service
 
+import android.util.Log
 import com.example.dosificapp.dominio.Dosis
 import com.example.dosificapp.dominio.Usuario
 import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -19,8 +22,12 @@ import kotlinx.serialization.json.long
 
 class UserService {
 
-    private val client = HttpClient()
-    private val baseUrl = "YOUR_BASE_URL"
+    private val client = HttpClient {
+        install(JsonFeature){
+            serializer = KotlinxSerializer()
+        }
+    }
+    private val baseUrl = "http://192.168.0.104:3000"
 
     suspend fun createUser(user: Usuario): HttpResponse {
         val url = "$baseUrl/api/PacienteAcompaniante/CrearAcompaniante"
@@ -43,18 +50,21 @@ class UserService {
     }
 
     suspend fun login(user: String?, pass: String?): Boolean {
-        val url = "$baseUrl/login"
+        val url = "$baseUrl/api/Base/Login/"
         val params = mapOf(
-                "username" to user,
-                "password" to pass
+                "User" to user,
+                "Password" to pass
         )
 
-        val response: HttpResponse = client.post(url) {
-            contentType(ContentType.Application.Json)
-            body = params
+        return try{
+            client.post<HttpResponse>(url) {
+                contentType(ContentType.Application.Json)
+                body = params
+            }.status == HttpStatusCode.OK
+        }catch (e : Exception){
+            Log.d("UserService","Error $e")
+            return false
         }
-
-        return response.status == HttpStatusCode.OK
     }
 
     suspend fun getListaAcompaniantes(userId: String): List<Usuario> {

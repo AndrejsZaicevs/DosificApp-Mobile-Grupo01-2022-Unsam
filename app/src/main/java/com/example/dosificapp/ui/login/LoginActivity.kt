@@ -2,6 +2,7 @@ package com.example.dosificapp.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -45,16 +46,15 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser(email: String, password: String) {
         lifecycleScope.launch {
             try {
-                val loginSuccess = userService.login(email, password)
-                if (loginSuccess) {
-                    // Handle successful login
-                    val user = Usuario(email, password) // Adjust as needed
+                if (userService.login(email, password)) {
+                    val user = Usuario(email, password)
                     loginRepository.setLoggedInUser(user, applicationContext)
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 } else {
                     Toast.makeText(applicationContext, "Error al iniciar sesion", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
+                Log.d("123", "$e")
                 Toast.makeText(applicationContext, "Error al iniciar sesion", Toast.LENGTH_SHORT).show()
             } finally {
                 binding.loading.visibility = View.GONE

@@ -1,6 +1,8 @@
 package com.example.dosificapp.service
 
 import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -8,8 +10,12 @@ import io.ktor.http.HttpStatusCode
 
 class DosesService {
 
-    private val client = HttpClient()
-    private val baseUrl = "YOUR_BASE_URL"
+    private val client = HttpClient {
+        install(JsonFeature){
+            serializer = KotlinxSerializer()
+        }
+    }
+    private val baseUrl = "http://192.168.0.104:3000"
 
     suspend fun confirmTomaDosis(dosisId: Long): Boolean {
         return postRequest("ConfirmarTomaDosis", dosisId)
